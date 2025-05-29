@@ -1,0 +1,197 @@
+/**\ hash960k.c (C)2025 Eleventh Intake Ltd: all rights reserved; here by permission
+/**/
+#error Stop using me please
+
+#define maxNZ(IT, TO) (assert( !((IT)>>(TO)) ))
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#include <math.h>
+
+#include <assert.h>
+
+typedef unsigned long lnat;
+typedef unsigned mnat; /* WRONG */
+
+struct frc_r_; typedef struct frc_r_ frc_r_; struct frc_r_ {
+  lnat h983, rank, stat;
+  mnat rook;
+};
+
+static frc_r_ a983[983], *q983= 1[&a983];
+static unsigned short a17[17];
+
+static frc_r_ *look(const lnat rank) {
+  int i, rem= (int)(rank%983u);
+  lnat xyz= (a983[rem]).h983;
+  frc_r_ *rv;
+
+  for (i= 3+1; --i; xyz>>= 10) {
+    const unsigned off= (unsigned)xyz&1023u;
+    rv= a983+off;
+    if (rv->rank==rank) break; /* expected - more or less(!) */
+  }
+  if (i); else { rv= a983+a17[rem%17]; assert(rv->rank==rank); }
+
+  return rv;
+}
+
+static void link(frc_r_ *const r) {
+  const int off= (int)(r-a983), rem= (int)(r->rank%983u);
+  lnat *q= &(a983[rem]).h983, xyz= *q;
+
+  if (!(xyz>>20)) *q= xyz<<10 | off;
+  else {
+    unsigned short *h= a17 + rem%17;
+    assert(!*h); *h= off;
+  }
+  assert(look(r->rank)==r);
+}
+
+static lnat a961[961];
+
+#define M 3
+#define N ((M)+10)
+#define Z ((N)-4)
+
+static mnat ah[1u<<Z];
+
+#define X 3
+#define Y 5
+#define W 99
+#define V 12
+
+static int over(lnat (*a)[V], int g, mnat y) {
+  lnat *p= (*a)+g; /* assert((mnat)g < V); /**/
+
+  *p= y;  if (g) while (*--p != y && --g);
+
+/*if (!g); else fprintf(stderr, "\t%lu %u\n", *p, y), fflush(0); /**/
+
+  return g;
+}
+
+static void overs(lnat (*a)[V], int g) {
+  lnat *p= (*a)+g; /* assert((mnat)g < V); /**/
+
+  if (g) do {--p;
+             fprintf(stderr, "\t%4lu\t%2lu %2lu %2lu\n",
+ *p, *p%17, *p%17-1, (*p+5)%17), fflush(0);
+         } while (--g);
+}
+
+static int itot(int *p, int n) {
+  int t= 0;
+
+  for (p+= n++; --n; t+= *--p);
+  return t;
+}
+#if 1
+#else
+static int bits(unsigned long it) {
+  unsigned t= (unsigned)it&1u;
+
+  while ((it>>= 1)) t+= (unsigned)it&1u;
+
+  return (int)t;
+}
+#endif
+static int hash(int (*b)[Y], mnat m) {
+  lnat *p= 1[&a961], i, g= V+1;
+  lnat a[1][V];
+
+  memset(ah, 0, sizeof ah);
+  memset(*b, 0, sizeof *b); **b= 960;
+
+  for (i= 960+1; --i; ) {
+    lnat x= *--p; /* mnat r= (mnat)fmod(x * 65521.0, m); /**/
+    mnat r= (x)%m, j= (r&15u)<<1, *q= ah+(r>>4), t= *q>>j&3u;
+
+    if (t < X) *q+= 1u<<j;
+    else if (--g && !over(a, V-g, r))
+if (m != 983 || t < X-1 || 00000); else do {
+printf("\t%4d %2d@%11lX\n", r, j, (lnat)*q);
+} while (0)
+;  
+    else return 0; /* reject this m */
+
+    ++(*b)[t+1]; --(*b)[t]; /* double-entry book-keeping */
+
+/*    if (m!=4013); else h837(x, r, t+1); /**/
+  }
+  assert(itot(*b, Y)==960); (void)itot;
+
+/*  if (m!=4013); else h837(0, 0, 0); /**/
+  if (m!=983); else {
+    overs(a, V+1-g); /**
+exit(EXIT_SUCCESS); /**/
+  }
+
+  **b= 1 * (*b)[2] + 3 * (*b)[3] + 6 * (*b)[4];
+
+  return m; /* accept this m */
+}
+
+static int main_(int ac, const char *const *av) {
+  int b[Y];
+  unsigned short w[W]; /* lowest doubles, by treble+quad */
+  int m, b34;
+
+memset(w, 255, sizeof w);
+
+/*  for (m= 222; !(++m>>N) && !hash(&b, m); ); /**/
+
+  for (m= 222; !(++m>>N); )
+    if (!hash(&b, m) || (b34= b[3]+b[4]) >= W); else {
+    int b2= b[2], i;
+                     for (i= b34+1; --i >= 0 && b2 < w[i]; );
+                     if (i>=0) continue; else w[b34]= b2;
+      printf("%4d (%5d moctets) [%3d, %3d, %2d, %1d] %d\n",
+        m, m<<2, b[1], b[2], b[3], b[4], b[0]); fflush(0); /**/
+
+      if (m!=983); else break; /**/
+    }
+  return EXIT_SUCCESS;
+}
+
+extern int main(int ac, const char *const *av) {
+  char a[101], *s;
+  lnat *q= 1[&a961];
+  int t= 0;
+
+  while ((s= fgets(a, sizeof a, stdin)) != 0)
+    if (iscntrl(*s)); else {
+      const size_t c= strspn(s, "BKNQR");
+      int i;
+      unsigned long v= 0;
+
+      if (c==8);
+      else if (!strcmp(s, "White   \n")) continue;
+      else assert(!*"!"), abort();
+
+      if (++t<=960);
+      else assert(!*"!!"), abort();
+#if 1
+      for (i= 8, s+= i++; --i; ) { v<<= 4; v|= *--s>>1&15u;
+assert(*s == 'A'-1 + (v<<1&30u | 0x6969u>>(v&15u) & 1u));
+#else
+      for (i= 8+1; --i; ) { v<<= 4; v|= *s++>>1&15u;
+if (i>=8); else
+assert(s[-2] == 'A'-1 + (v>>3&30u | 0x6969u>>(v>>4&15u) & 1u));
+#endif
+ }
+
+      if (!*--q);
+      else assert(!*"!!!"), abort();
+
+      *q= v; (--q983)->rank= v; q983->stat= t-1; link(q983);
+    }
+
+  if (t==960);
+  else assert(!*"!!!!"), abort();
+
+  ac= main_(ac, av);  return ac;
+}
